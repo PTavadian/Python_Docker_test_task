@@ -1,0 +1,50 @@
+version: '3.5'
+
+services:
+  db:
+    container_name: db_some  
+    ports:
+      - "5437:5437"
+
+    environment: 
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: admin
+      POSTGRES_DB: test_db 
+
+
+    image: postgres:14.3-alpine  
+
+    command: 
+      - "postgres"
+      - "-c"
+      - "port=5437"
+
+#    volumes:
+#      - /root/home/database/test_db:/var/lib/postgresql/data
+
+    restart: on-failure
+
+
+
+  app:
+    build: ./app 
+
+    restart: always
+
+    depends_on:
+      - db
+
+    links:
+      - db 
+
+
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
